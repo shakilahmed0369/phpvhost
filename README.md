@@ -24,7 +24,7 @@ A powerful CLI tool to manage Apache virtual hosts with SSL support for PHP proj
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/shakilahmed0369/phpvhost
    cd phpvhost
    ```
 
