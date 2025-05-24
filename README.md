@@ -18,14 +18,14 @@ A powerful CLI tool to manage Apache virtual hosts with SSL support for PHP proj
 - Python 3.6+
 - Apache HTTP Server
 - Root/sudo privileges
-- Linux/macOS system
+- Linux system
 
 ## Installation 💻
 
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd laravel-cli-app
+   cd phpvhost
    ```
 
 2. Make the install script executable:
