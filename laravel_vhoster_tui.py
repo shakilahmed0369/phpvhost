@@ -8,6 +8,9 @@ from pathlib import Path
 import shutil
 import platform
 import time
+from InquirerPy import inquirer
+from InquirerPy.base.control import Choice
+from InquirerPy.separator import Separator
 
 # Configuration
 CONFIG_PATH = Path.home() / ".laravel_vhoster_config.json"
@@ -104,7 +107,44 @@ class LaravelVHostManager:
     
     def __init__(self):
         self.config = self.load_config()
-    
+
+    def select_project_folder(self, base_path):
+        """Interactive folder selection with search functionality"""
+        try:
+            # Get all folders in the base path
+            folders = [d for d in Path(base_path).iterdir() if d.is_dir()]
+            
+            if not folders:
+                UI.print_warning(f"No folders found in {base_path}")
+                return None
+            
+            # Create choices list with folder names and full paths
+            choices = [
+                Choice(value=str(folder), name=folder.name)
+                for folder in sorted(folders, key=lambda x: x.name.lower())
+            ]
+            
+            # Add separators for better visual organization
+            if len(choices) > 10:
+                mid = len(choices) // 2
+                choices.insert(mid, Separator())
+            
+            # Show interactive folder selector
+            selected = inquirer.fuzzy(
+                message="Select a project folder:",
+                choices=choices,
+                validate=lambda x: True if x else "Please select a folder",
+                instruction="(Use arrow keys and type to search)",
+                long_instruction="Type to search, ↑↓ to navigate, Enter to select",
+                max_height="70%"
+            ).execute()
+            
+            return Path(selected).name if selected else None
+            
+        except Exception as e:
+            UI.print_error(f"Error during folder selection: {str(e)}")
+            return None
+
     def load_config(self):
         if CONFIG_PATH.exists():
             with open(CONFIG_PATH) as f:
@@ -164,11 +204,11 @@ class LaravelVHostManager:
                 self.config["base_path"] = base_path
                 self.save_config(self.config)
         
-        # Get project details
+        # Get project details using interactive selection
         print()
-        project_name = UI.get_input("Enter Laravel project folder name (e.g., myapp)")
+        project_name = self.select_project_folder(base_path)
         if not project_name:
-            UI.print_error("Project name is required!")
+            UI.print_error("Project selection cancelled!")
             input("Press Enter to continue...")
             return
         
