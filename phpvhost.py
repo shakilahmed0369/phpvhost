@@ -70,8 +70,12 @@ class UI:
     
     @staticmethod
     def get_input(prompt, default=""):
-        default_text = f" [{default}]" if default else ""
-        return input(f"{Colors.YELLOW}{prompt}{default_text}: {Colors.END}").strip() or default
+        try:
+            default_text = f" [{default}]" if default else ""
+            return input(f"{Colors.YELLOW}{prompt}{default_text}: {Colors.END}").strip() or default
+        except KeyboardInterrupt:
+            print()  # Add a newline after ^C
+            raise
     
     @staticmethod
     def get_confirmation(message):
@@ -158,32 +162,37 @@ class PHPVHostManager:
     def main_menu(self):
         """Display main menu and handle user selection"""
         while True:
-            UI.clear_screen()
-            UI.print_header("🚀 PHP VHost Manager")
-            
-            print(f"{Colors.MAGENTA}Easily manage PHP virtual hosts with SSL support{Colors.END}")
-            print(f"{Colors.MAGENTA}Perfect for local development environments{Colors.END}\n")
-            
-            UI.print_menu_item("1", "📝 Register New Project", "Add a new Laravel project")
-            UI.print_menu_item("2", "📋 Manage Projects", "View and remove existing projects")
-            UI.print_menu_item("3", "⚙️  System Status", "Check system configuration")
-            UI.print_menu_item("4", "❌ Exit", "Quit the application")
-            
-            print()
-            choice = UI.get_input("Select an option (1-4)")
-            
-            if choice == "1":
-                self.register_project()
-            elif choice == "2":
-                self.manage_projects()
-            elif choice == "3":
-                self.show_system_status()
-            elif choice == "4":
+            try:
+                UI.clear_screen()
+                UI.print_header("🚀 PHP VHost Manager")
+                
+                print(f"{Colors.MAGENTA}Easily manage PHP virtual hosts with SSL support{Colors.END}")
+                print(f"{Colors.MAGENTA}Perfect for local development environments{Colors.END}\n")
+                
+                UI.print_menu_item("1", "📝 Register New Project", "Add a new Laravel project")
+                UI.print_menu_item("2", "📋 Manage Projects", "View and remove existing projects")
+                UI.print_menu_item("3", "⚙️  System Status", "Check system configuration")
+                UI.print_menu_item("4", "❌ Exit", "Quit the application")
+                
+                print()
+                choice = UI.get_input("Select an option (1-4)")
+                
+                if choice == "1":
+                    self.register_project()
+                elif choice == "2":
+                    self.manage_projects()
+                elif choice == "3":
+                    self.show_system_status()
+                elif choice == "4":
+                    UI.print_info("Goodbye! 👋")
+                    break
+                else:
+                    UI.print_error("Invalid option. Please select 1-4.")
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print()  # Add a newline after ^C
                 UI.print_info("Goodbye! 👋")
                 break
-            else:
-                UI.print_error("Invalid option. Please select 1-4.")
-                time.sleep(1)
 
     def register_project(self):
         """Register a new Laravel project"""
@@ -515,28 +524,33 @@ class PHPVHostManager:
 
 def main():
     """Main entry point"""
-    # Check for root privileges
-    if os.geteuid() != 0:
-        print(f"{Colors.RED}{Colors.BOLD}❌ This script requires root privileges{Colors.END}")
-        print(f"{Colors.YELLOW}Please run with sudo:{Colors.END}")
-        print(f"{Colors.CYAN}sudo python3 {sys.argv[0]}{Colors.END}")
-        sys.exit(1)
-    
-    # Handle command line arguments for backward compatibility
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "register":
-            manager = PHPVHostManager()
-            manager.register_project()
-        elif sys.argv[1] == "remove":
-            manager = PHPVHostManager()
-            manager.manage_projects()
+    try:
+        # Check for root privileges
+        if os.geteuid() != 0:
+            print(f"{Colors.RED}{Colors.BOLD}❌ This script requires root privileges{Colors.END}")
+            print(f"{Colors.YELLOW}Please run with sudo:{Colors.END}")
+            print(f"{Colors.CYAN}sudo python3 {sys.argv[0]}{Colors.END}")
+            sys.exit(1)
+        
+        # Handle command line arguments for backward compatibility
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "register":
+                manager = PHPVHostManager()
+                manager.register_project()
+            elif sys.argv[1] == "remove":
+                manager = PHPVHostManager()
+                manager.manage_projects()
+            else:
+                print(f"{Colors.RED}Unknown command: {sys.argv[1]}{Colors.END}")
+                print(f"{Colors.YELLOW}Usage: {sys.argv[0]} [register|remove]{Colors.END}")
         else:
-            print(f"{Colors.RED}Unknown command: {sys.argv[1]}{Colors.END}")
-            print(f"{Colors.YELLOW}Usage: {sys.argv[0]} [register|remove]{Colors.END}")
-    else:
-        # Run interactive TUI
-        manager = PHPVHostManager()
-        manager.main_menu()
+            # Run interactive TUI
+            manager = PHPVHostManager()
+            manager.main_menu()
+    except KeyboardInterrupt:
+        print()  # Add a newline after ^C
+        print(f"{Colors.BLUE}ℹ️  Program terminated by user{Colors.END}")
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()
