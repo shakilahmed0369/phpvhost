@@ -1,10 +1,21 @@
 #!/usr/bin/env python3
 
+"""
+PHP VHost Manager
+A powerful CLI tool to manage Apache virtual hosts with SSL support for PHP projects.
+
+Author: Shakil Ahmed
+Website: https://shakilahmeed.com
+Email: sakilhossain01969@gmail.com
+Created: May 2025
+License: MIT
+"""
+
+from pathlib import Path
 import os
 import sys
 import subprocess
 import json
-from pathlib import Path
 import shutil
 import platform
 import time
