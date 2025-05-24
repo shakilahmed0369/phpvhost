@@ -13,7 +13,7 @@ from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 
 # Configuration
-CONFIG_PATH = Path.home() / ".laravel_vhoster_config.json"
+CONFIG_PATH = Path.home() / ".phpvhost_config.json"
 APACHE_VHOST_DIR = "/etc/httpd/conf/extra"
 VHOST_INCLUDE_PATH = "/etc/httpd/conf/httpd.conf"
 HOSTS_PATH = "/etc/hosts"
@@ -102,7 +102,7 @@ class UI:
             print(f"{Colors.CYAN}│{Colors.END} {line}{' ' * padding} {Colors.CYAN}│{Colors.END}")
         print(f"{Colors.CYAN}└{'─' * (width-2)}┘{Colors.END}")
 
-class LaravelVHostManager:
+class PHPVHostManager:
     """Main application class"""
     
     def __init__(self):
@@ -159,9 +159,9 @@ class LaravelVHostManager:
         """Display main menu and handle user selection"""
         while True:
             UI.clear_screen()
-            UI.print_header("🚀 Laravel VHost Manager")
+            UI.print_header("🚀 PHP VHost Manager")
             
-            print(f"{Colors.MAGENTA}Easily manage Laravel virtual hosts with SSL support{Colors.END}")
+            print(f"{Colors.MAGENTA}Easily manage PHP virtual hosts with SSL support{Colors.END}")
             print(f"{Colors.MAGENTA}Perfect for local development environments{Colors.END}\n")
             
             UI.print_menu_item("1", "📝 Register New Project", "Add a new Laravel project")
@@ -188,12 +188,12 @@ class LaravelVHostManager:
     def register_project(self):
         """Register a new Laravel project"""
         UI.clear_screen()
-        UI.print_header("📝 Register New Laravel Project")
+        UI.print_header("📝 Register New PHP Project")
         
         # Get base path
         if not self.config.get("base_path"):
-            print(f"{Colors.YELLOW}First time setup - please configure your base Laravel projects path{Colors.END}")
-            base_path = UI.get_input("Enter base Laravel projects path", str(Path.home() / "Projects"))
+            print(f"{Colors.YELLOW}First time setup - please configure your base PHP projects path{Colors.END}")
+            base_path = UI.get_input("Enter base PHP projects path", str(Path.home() / "Projects"))
             self.config["base_path"] = base_path
             self.save_config(self.config)
         else:
@@ -262,12 +262,12 @@ class LaravelVHostManager:
     def manage_projects(self):
         """Manage existing projects"""
         UI.clear_screen()
-        UI.print_header("📋 Manage Laravel Projects")
+        UI.print_header("📋 Manage PHP Projects")
         
         projects = self.get_existing_projects()
         
         if not projects:
-            UI.print_warning("No Laravel projects found")
+            UI.print_warning("No PHP projects found")
             input("Press Enter to continue...")
             return
         
@@ -525,17 +525,17 @@ def main():
     # Handle command line arguments for backward compatibility
     if len(sys.argv) > 1:
         if sys.argv[1] == "register":
-            manager = LaravelVHostManager()
+            manager = PHPVHostManager()
             manager.register_project()
         elif sys.argv[1] == "remove":
-            manager = LaravelVHostManager()
+            manager = PHPVHostManager()
             manager.manage_projects()
         else:
             print(f"{Colors.RED}Unknown command: {sys.argv[1]}{Colors.END}")
             print(f"{Colors.YELLOW}Usage: {sys.argv[0]} [register|remove]{Colors.END}")
     else:
         # Run interactive TUI
-        manager = LaravelVHostManager()
+        manager = PHPVHostManager()
         manager.main_menu()
 
 if __name__ == "__main__":

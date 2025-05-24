@@ -1,10 +1,29 @@
 #!/bin/bash
 
+# Installation paths
+INSTALL_DIR="/usr/local/share/phpvhost"
+BIN_DIR="/usr/local/bin"
+
 # ANSI color codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+
+# Check if running with sudo
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${RED}Please run this script with sudo${NC}"
+    exit 1
+fi
+
+# Handle uninstall
+if [ "$1" = "uninstall" ]; then
+    echo -e "${YELLOW}🗑️  Uninstalling PHPVHost Manager...${NC}"
+    rm -rf "$INSTALL_DIR"
+    rm -f "$BIN_DIR/phpvhost"
+    echo -e "${GREEN}✅ Uninstallation completed!${NC}"
+    exit 0
+fi
 
 # Function to print with color
 print_status() {
@@ -33,7 +52,7 @@ install_python_package() {
 }
 
 # Welcome message
-print_status "🚀 Installing Laravel VHost Manager dependencies..." "$YELLOW"
+print_status "🚀 Installing PHP VHost Manager dependencies..." "$YELLOW"
 echo
 
 # Check for Python 3
@@ -124,11 +143,33 @@ install_python_package "inquirerpy"
 print_status "🔒 Setting up mkcert..." "$YELLOW"
 mkcert -install
 
-# Final check
-print_status "\n✅ Dependencies installation completed!" "$GREEN"
-print_status "You can now run the Laravel VHost Manager with:" "$YELLOW"
-print_status "sudo python3 laravel_vhoster_tui.py" "$GREEN"
+# Install the application
+print_status "\n📦 Installing PHPVHost Manager..." "$YELLOW"
+
+# Create installation directory
+mkdir -p "$INSTALL_DIR"
+
+# Copy the main script
+cp phpvhost.py "$INSTALL_DIR/phpvhost.py"
+chmod +x "$INSTALL_DIR/phpvhost.py"
+
+# Create wrapper script
+cat > /tmp/phpvhost << EOF
+#!/bin/bash
+sudo python3 ${INSTALL_DIR}/phpvhost.py "\$@"
+EOF
+
+# Install wrapper script
+mv /tmp/phpvhost "$BIN_DIR/"
+chmod +x "$BIN_DIR/phpvhost"
 
 # Make certificate directory
 mkdir -p ~/.localhost-ssl
-print_status "✅ Created SSL certificates directory at ~/.localhost-ssl" "$GREEN"
+chmod 755 ~/.localhost-ssl
+
+# Final messages
+print_status "\n✅ Installation completed!" "$GREEN"
+print_status "You can now run PHP VHost Manager globally with:" "$YELLOW"
+print_status "phpvhost" "$GREEN"
+print_status "\nTo uninstall in the future, run:" "$YELLOW"
+print_status "sudo ./install.sh uninstall" "$GREEN"
