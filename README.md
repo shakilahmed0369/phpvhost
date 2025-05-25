@@ -1,3 +1,4 @@
+![thumbnail](https://github.com/user-attachments/assets/4899dd9e-b638-4e8d-ba91-c5896d9a6099)
 # PHP VHost Manager 🚀
 
 A powerful CLI tool to manage Apache virtual hosts with SSL support for PHP projects, perfect for local development environments.
