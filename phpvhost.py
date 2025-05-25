@@ -180,7 +180,7 @@ class PHPVHostManager:
                 print(f"{Colors.MAGENTA}Easily manage PHP virtual hosts with SSL support{Colors.END}")
                 print(f"{Colors.MAGENTA}Perfect for local development environments{Colors.END}\n")
                 
-                UI.print_menu_item("1", "📝 Register New Project", "Add a new Laravel project")
+                UI.print_menu_item("1", "📝 Register New Project", "Add a new PHP project")
                 UI.print_menu_item("2", "📋 Manage Projects", "View and remove existing projects")
                 UI.print_menu_item("3", "⚙️  System Status", "Check system configuration")
                 UI.print_menu_item("4", "❌ Exit", "Quit the application")
