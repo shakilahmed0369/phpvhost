@@ -182,7 +182,7 @@ class PHPVHostManager:
                 
                 UI.print_menu_item("1", "📝 Register New Project", "Add a new PHP project")
                 UI.print_menu_item("2", "📋 Manage Projects", "View and remove existing projects")
-                UI.print_menu_item("3", "⚙️  System Status", "Check system configuration")
+                UI.print_menu_item("3", "⚙️ System Status", "Check system configuration")
                 UI.print_menu_item("4", "❌ Exit", "Quit the application")
                 
                 print()
